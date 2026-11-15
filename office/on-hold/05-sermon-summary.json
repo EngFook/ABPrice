@@ -1,7 +1,0 @@
-{
-  "title": "讲道笔记：接后端，生成大纲、经文、讨论题",
-  "description": "前提：「讲道笔记：用 SpeechAnalyzer 在手机上转文字」已完成。接口约定以 docs/api.md 为准，后端代码在 backend/。\n\n要做的：\n1. 后端地址和 App 密钥不能进 Git（仓库是公开的）：\n   - 新建 ios/App/Config/Secrets.example.xcconfig（进 Git），内容是 BACKEND_URL 和 APP_SHARED_KEY 两个占位值。\n   - 在这台 Mac 上复制一份成 ios/App/Config/Secrets.xcconfig（已在 .gitignore 里），先填占位值。\n   - 在 ios/project.yml 里让 App 的 Debug 和 Release 都用这个 xcconfig，并在 Info.plist 里加 BackendURL = $(BACKEND_URL)、AppKey = $(APP_SHARED_KEY)。\n   - 注意 xcconfig 里 // 会被当成注释，网址要写成 https:/$()/example.com 这样。\n   - AppConfig 从 Bundle.main 读取这两个值，读不到时用假数据模式。\n2. 新建 SummaryService：按 docs/api.md 把讲道全文 POST 到 /v1/summarize。请求头带 X-App-Key；deviceId 用 UIDevice.current.identifierForVendor，取不到就生成一个 UUID 存进钥匙串。请求超时 120 秒；遇到 502 或 503 等 3 秒自动重试一次。成功后把结果存进 Sermon.summaryJSON，状态改成 done。\n3. 调用前走已有流程：第一次先弹 AI 同意页，把 AppConfig.aiProviderName 改成 \"Anthropic's Claude AI\"；免费用户用 UsageQuota 计次，把 AppConfig.freeUses 改成 1，用完就弹付费页。只有返回 200 才算用掉一次。\n4. 每个错误代码按 docs/api.md 的表格显示对应的英文提示，可以重试的给重试按钮。\n5. DEBUG 下加一个假数据开关（AppConfig.useMockSummary），直接读 ios/App/Resources/SampleSummary.json，方便在后端部署前把界面做完。\n6. 详情页展示总结：标题、一句话重点、大纲、经文出处（下一张卡会变成经文卡片）、生活应用、讨论题、祷告提示。排版清楚好读，支持深色模式和动态字体。重新生成也算一次使用。\n\n完成标准：编译通过；假数据模式下整个流程能跑通（同意页、免费次数、付费页、总结显示）；如果 Secrets.xcconfig 里已经填了真实的后端地址和密钥，就用真实接口跑一次，没有就在报告里写明。提交并推送，报告里列出改动文件和检查结果。",
-  "provider": "any",
-  "role": "Helper",
-  "priority": "normal"
-}

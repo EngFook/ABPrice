@@ -1,0 +1,7 @@
+{
+  "title": "跑团记录：用 SpeechAnalyzer 在手机上转文字（带角色名词汇）",
+  "description": "背景：这个 App 是线下跑团记录员，方案见 docs/plan.md，后端接口见 docs/api.md。App 名字、图标、文案和关键词里都不要出现 D&D 或 Dungeons & Dragons，统一说 tabletop RPG。所有界面文字用英文。\n\n前提：「跑团记录：战役和场次、长时间录音」已完成。\n\n要做的：\n1. 用 iOS 26 的 SpeechAnalyzer 加 SpeechTranscriber 在设备上转写，音频不上传。先查 Xcode 里的官方文档确认准确用法。语言用当前地区的英语，不支持就退回 en-US；语音模型没装时用 AssetInventory 下载并显示进度。\n2. 把这个战役的角色名和战役记录里的 NPC、地点名作为自定义词汇交给转写（查 AnalysisContext 的用法），减少奇幻名字被听错。\n3. 录音停止或导入后自动开始转写，详情页显示进度；4 小时以上的录音要能分段处理，不能一次占满内存。完成后存进 Session.transcript，状态改成 transcribed；失败显示原因和重试按钮。App 被切到后台再回来，要能接着转或者从头重转。\n4. 场次详情页加「Transcript」区域，默认折叠。\n5. 单元测试：在 Mac 上用 say 命令生成一段约 30 秒、带几个奇幻名字的英文测试音频，测试转写结果包含预期关键词；再测一次带自定义词汇和不带的区别，写进报告。\n\n完成标准：编译通过、测试通过；在模拟器或真机上，一段录音能转出文字。报告里写明 1 小时音频大概要转多久（能测就测）。提交并推送。",
+  "provider": "claude",
+  "role": "Helper",
+  "priority": "normal"
+}

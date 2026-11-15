@@ -1,0 +1,31 @@
+{
+  "isSession": true,
+  "title": "Smoke Over Brindle Ford",
+  "recap": "Last time, our heroes followed the river road to Brindle Ford and found the old mill in flames. Kael charged into the smoke and carried Old Marta, the tavern keeper, to safety, while Ivy spotted a hooded rider fleeing north. In the ashes they found a black feather token, warm to the touch. Marta begged them to stay the night, warning that this was the third fire in a month. As the party bedded down above the tavern, Ivy heard wingbeats on the roof.",
+  "keyMoments": [
+    "The party reached Brindle Ford as the mill burned",
+    "Kael rescued Old Marta from the fire",
+    "Ivy saw a hooded rider escape north",
+    "The party found a warm black feather token in the ashes",
+    "Marta revealed this was the third fire this month"
+  ],
+  "npcs": [
+    { "name": "Old Marta", "description": "Tavern keeper of Brindle Ford who owes the party her life.", "status": "ally" },
+    { "name": "The hooded rider", "description": "Fled north from the burning mill.", "status": "unknown" }
+  ],
+  "locations": [
+    { "name": "Brindle Ford", "description": "A quiet river village with a burned-out mill." },
+    { "name": "The Drowsy Heron", "description": "Marta's tavern, where the party is staying." }
+  ],
+  "quests": [
+    { "name": "Who is burning Brindle Ford?", "status": "new", "note": "Three fires in a month; a black feather was left at the latest one." }
+  ],
+  "loot": [
+    { "item": "Black feather token (warm to the touch)", "holder": "Ivy" },
+    { "item": "12 gold pieces from Marta", "holder": "party" }
+  ],
+  "openThreads": [
+    "Who was the hooded rider heading north?",
+    "What made the wingbeats on the tavern roof?"
+  ]
+}

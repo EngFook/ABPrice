@@ -1,7 +1,7 @@
 {
   "title": "iOS 基础工程：加本地 StoreKit 测试商品，跑通购买和恢复",
   "description": "目标：加一个本地 StoreKit 测试配置，让付费页在模拟器里能显示商品，能模拟购买和恢复购买，不需要先去 App Store Connect 建商品。\n\n前提：「iOS 基础工程：生成 Xcode 工程，在模拟器编译通过」那张卡已经完成并推送。如果工程还编译不过，先停下并报告，不要做这张卡。\n\n步骤：\n1. 新建 ios/App/Products.storekit（StoreKit Configuration File，用 Xcode 能识别的格式）。里面放一个名为 Pro 的订阅组，包含两个自动续期订阅（定价依据见 docs/plan.md）：\n   - com.example.app.pro.annual：每年 39.99 美元，带 2 周免费试用，排在第一位\n   - com.example.app.pro.monthly：每月 7.99 美元，不带试用\n   不要加每周方案。\n2. 把这个订阅组的 ID 填进 ios/App/Sources/App/AppConfig.swift 的 subscriptionGroupID。\n3. 在 ios/project.yml 里给 App scheme 配置 storeKitConfiguration，指向这个文件（用 XcodeGen 支持的写法），然后重新运行 xcodegen generate。\n4. 编译通过后，能在模拟器里自动验证的就验证：付费页显示两个方案，年付在前、显示 2 周免费试用；模拟购买后付费页关闭，主页不再显示免费次数；设置页显示 Pro 已开通；恢复购买按钮可用。需要在 Xcode 界面里手动操作的检查（比如在交易管理器里退款、让订阅过期），列成清单写进完成报告，留给我自己点。\n5. 提交并推送到当前分支。\n\n完成报告要包含：每项验证的结果、留给我手动检查的清单、改动文件清单。",
-  "provider": "any",
+  "provider": "codex",
   "role": "Helper",
   "priority": "normal"
 }

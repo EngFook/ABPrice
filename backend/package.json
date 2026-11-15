@@ -1,5 +1,5 @@
 {
-  "name": "sermon-notes-api",
+  "name": "tabletop-recap-api",
   "private": true,
   "type": "module",
   "scripts": {

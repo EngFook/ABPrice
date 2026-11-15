@@ -1,7 +1,0 @@
-{
-  "title": "讲道笔记：用 SpeechAnalyzer 在手机上转文字",
-  "description": "前提：「讲道笔记：录音（锁屏可继续）、导入音频、讲道列表」已完成。\n\n要做的：\n1. 用 iOS 26 的 SpeechAnalyzer 加 SpeechTranscriber，在设备上把录音转成文字。音频不上传。先查 Xcode 里的官方文档，确认 API 的准确用法。\n2. 语言用当前地区的英语（en-US、en-GB、en-AU、en-SG 等；不支持的就退回 en-US）。语音模型没安装时，用 AssetInventory 下载，并显示下载进度。\n3. 停止录音或导入音频后自动开始转写，详情页显示进度。完成后把全文存进 Sermon.transcript，状态改成 transcribed。失败时显示原因和重试按钮。\n4. 详情页加上「讲道全文」区域，默认折叠。\n5. 写单元测试：在 Mac 上用 say 命令生成一段约 20 秒的英文测试音频（比如读一段带 John 3:16 的话），放进测试资源，测试转写结果里包含预期的关键词。\n\n完成标准：编译通过，单元测试通过；在模拟器或真机上，一段录音能转出文字并显示。提交并推送，报告里列出改动文件、测试结果，以及 45 分钟音频大概要转多久（能测就测，不能测就写明）。",
-  "provider": "any",
-  "role": "Helper",
-  "priority": "normal"
-}

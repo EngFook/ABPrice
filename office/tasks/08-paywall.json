@@ -1,0 +1,7 @@
+{
+  "title": "跑团记录：引导页示例回顾、付费页文案和定价核对",
+  "description": "背景：这个 App 是线下跑团记录员，方案见 docs/plan.md，后端接口见 docs/api.md。App 名字、图标、文案和关键词里都不要出现 D&D 或 Dungeons & Dragons，统一说 tabletop RPG。所有界面文字用英文。\n\n前提：「跑团记录：分享回顾到 Discord 和群聊」已完成。\n\n要做的：\n1. 引导页最后一页之前加「Sample recap」页：用 ios/App/Resources/SampleRecap.json 渲染成与真实场次详情页一样的样子（可滚动）。这是付费页前的效果演示，不调用后端。\n2. 付费页 proBenefits 改成（与实际功能一致，不夸大）：AI recaps for every session；A campaign log that keeps itself up to date；Share recaps with your group。\n3. 核对最终状态（前面的卡做成别的数值的话，改成这里的）：Products.storekit 只有年付 39.99 美元带 2 周免费试用（排第一）和月付 7.99 美元不带试用；AppConfig.freeUses 是 1；aiProviderName 是 \"Anthropic's Claude AI\"；付费页能关闭，有恢复购买、服务条款和隐私政策链接。\n4. 按苹果审核指南 3.1.2，实际扣费金额要比试用信息更醒目，用 SubscriptionStoreView 自带的显示方式即可。\n5. 全 App 检查一遍：名字、文案、图标占位里没有 D&D 或 Dungeons & Dragons。\n\n完成标准：编译通过；模拟器里从全新安装走一遍：引导页、示例回顾、付费页、关闭、新建战役、录音、第一次免费回顾（假数据模式）、第二次弹付费页。截图放进 docs/screenshots/。提交并推送。",
+  "provider": "claude",
+  "role": "Helper",
+  "priority": "normal"
+}

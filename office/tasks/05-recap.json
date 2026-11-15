@@ -1,0 +1,7 @@
+{
+  "title": "跑团记录：接后端生成回顾，并更新战役记录",
+  "description": "背景：这个 App 是线下跑团记录员，方案见 docs/plan.md，后端接口见 docs/api.md。App 名字、图标、文案和关键词里都不要出现 D&D 或 Dungeons & Dragons，统一说 tabletop RPG。所有界面文字用英文。\n\n前提：「跑团记录：用 SpeechAnalyzer 在手机上转文字」已完成。\n\n要做的：\n1. 后端地址和 App 密钥不能进 Git（仓库是公开的）：新建 ios/App/Config/Secrets.example.xcconfig（进 Git，放 BACKEND_URL 和 APP_SHARED_KEY 两个占位值）；在这台 Mac 上复制成 ios/App/Config/Secrets.xcconfig（已在 .gitignore 里）。在 ios/project.yml 里让 App 的 Debug 和 Release 都用它，并在 Info.plist 加 BackendURL = $(BACKEND_URL)、AppKey = $(APP_SHARED_KEY)。xcconfig 里 // 会被当成注释，网址要写成 https:/$()/example.com。AppConfig 从 Bundle.main 读，读不到就用假数据模式。\n2. 新建 RecapService，按 docs/api.md 调 POST /v1/recap：带 X-App-Key；deviceId 用 identifierForVendor，取不到就生成一个 UUID 存进钥匙串；campaignName、party、previousLog（这个战役当前的 logJSON）、date 都带上。超时 180 秒；遇到 502 或 503 等 3 秒自动重试一次。\n3. 成功后：回顾存进 Session.recapJSON，标题写进 Session.title，返回的 npcs、locations、quests、loot 直接替换 Campaign.logJSON，状态改成 done。\n4. 调用前走已有流程：第一次先弹 AI 同意页，AppConfig.aiProviderName 改成 \"Anthropic's Claude AI\"；免费用户用 UsageQuota 计次，AppConfig.freeUses 改成 1，用完弹付费页。只有 200 才算一次。\n5. 每个错误代码按 docs/api.md 的表格显示英文提示，能重试的给重试按钮。\n6. DEBUG 下加假数据开关 AppConfig.useMockRecap，直接读 ios/App/Resources/SampleRecap.json。\n7. 场次详情页展示：标题、Last time…（回顾正文）、关键时刻、本场新出现或有变化的 NPC、任务和战利品、未解决的线索。支持深色模式和动态字体。重新生成也算一次。\n\n完成标准：编译通过；假数据模式下整个流程能跑通（同意页、免费次数、付费页、回顾显示、战役记录被更新）；Secrets.xcconfig 已填真实后端时用真实接口跑一次，没填就在报告里写明。提交并推送。",
+  "provider": "claude",
+  "role": "Helper",
+  "priority": "normal"
+}

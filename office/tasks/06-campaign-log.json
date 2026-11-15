@@ -1,0 +1,7 @@
+{
+  "title": "跑团记录：战役记录页和开团朗读",
+  "description": "背景：这个 App 是线下跑团记录员，方案见 docs/plan.md，后端接口见 docs/api.md。App 名字、图标、文案和关键词里都不要出现 D&D 或 Dungeons & Dragons，统一说 tabletop RPG。所有界面文字用英文。\n\n前提：「跑团记录：接后端生成回顾，并更新战役记录」已完成。\n\n要做的：\n1. 战役页加一个「Campaign log」入口，分四栏：NPCs（按状态分组，ally / enemy / neutral / dead / unknown）、Locations、Quests（按 new、ongoing、completed、failed 分组）、Loot（显示持有人）。\n2. 每一条都能手动编辑、删除和新增（用户常要修正被听错的名字）。改动直接写回 Campaign.logJSON，下一场生成回顾时会带给后端。\n3. 「Read aloud」开团朗读页：大字显示上一场的 Last time…，自动保持屏幕常亮，底部列出未解决的线索，方便 DM 开团时念。\n4. 战役页顶部显示最近一场的标题和日期，以及进行中的任务数量。\n\n完成标准：编译通过；用假数据生成一场后，四栏都有内容，改一个 NPC 名字后再看详情页和朗读页都同步。提交并推送，截图放进 docs/screenshots/。",
+  "provider": "codex",
+  "role": "Helper",
+  "priority": "normal"
+}

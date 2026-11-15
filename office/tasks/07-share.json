@@ -1,0 +1,7 @@
+{
+  "title": "跑团记录：分享回顾到 Discord 和群聊",
+  "description": "背景：这个 App 是线下跑团记录员，方案见 docs/plan.md，后端接口见 docs/api.md。App 名字、图标、文案和关键词里都不要出现 D&D 或 Dungeons & Dragons，统一说 tabletop RPG。所有界面文字用英文。\n\n前提：「跑团记录：战役记录页和开团朗读」已完成。\n\n要做的：\n1. 场次详情页加「Share recap」：用 ImageRenderer 生成一张竖版图片（战役名、本场标题、日期、Last time…、2 到 3 条关键时刻），底部是 App 名字和一句下载引导。跟随系统深色或浅色。\n2. 同时提供文字版本，用 Discord 能显示的 Markdown（粗体标题、列表），也能直接粘贴到 WhatsApp。\n3. 用 ShareLink 一起分享图片和文字。\n\n完成标准：编译通过；模拟器里能打开分享面板，图片和文字都在。截图放进 docs/screenshots/。提交并推送。",
+  "provider": "codex",
+  "role": "Helper",
+  "priority": "normal"
+}

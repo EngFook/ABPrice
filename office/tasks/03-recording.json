@@ -1,0 +1,7 @@
+{
+  "title": "跑团记录：战役和场次、长时间录音（锁屏可继续）",
+  "description": "背景：这个 App 是线下跑团记录员，方案见 docs/plan.md，后端接口见 docs/api.md。App 名字、图标、文案和关键词里都不要出现 D&D 或 Dungeons & Dragons，统一说 tabletop RPG。所有界面文字用英文。\n\n前提：基础工程两张卡已完成。如果工程还编译不过，先停下并报告。\n\n要做的：\n1. 把 ios/project.yml 的部署目标改成 iOS 26.0（转文字要用 SpeechAnalyzer），重新 xcodegen generate。\n2. Info.plist 加 NSMicrophoneUsageDescription（英文，说明是为了录下这一场团做回顾）和 UIBackgroundModes: audio。\n3. 用 SwiftData 建模型。Campaign：id、name、party（角色名数组）、logJSON（NPC、地点、任务、战利品四个列表，格式与 docs/api.md 的 previousLog 一致）、createdAt。Session：id、campaign、date、title、audioFileName、duration、transcript、recapJSON、status（recorded / transcribing / transcribed / recapping / done / failed）。\n4. 主页是战役列表；可以新建战役（名字加最多 12 个角色名）。点进战役是场次列表，最新的在上面。\n5. 录音页：开录前弹一次确认「Everyone at the table agreed to be recorded」，确认后才开始。支持暂停、继续、停止，显示计时和音量；锁屏、切后台时继续录；来电等打断后能继续。用 AVAudioRecorder 存成 m4a（AAC、单声道、32 kbps 左右，6 小时约 90 MB），放在 Documents/Recordings。单场最长 6 小时，到时自动停止并保存。\n6. 支持从文件 App 导入音频（m4a、mp3、wav）作为一场。\n7. 原来 HomeView 的「同意页、免费次数、付费页」流程保留，只在生成 AI 回顾时才用（录音和转文字都在本机，不算次数）。\n8. AppConfig 的 appName 暂时用 \"Tavern Notes\"，引导页 3 页分别讲：放在桌上录、自动写出上回说到、战役记录一直在。\n\n完成标准：编译通过；模拟器里新建战役、录一段 1 分钟以上的音（中途锁屏），停止后场次列表出现这一条并能播放；导入音频也能出现。提交并推送，报告里列出改动文件和每项检查结果。",
+  "provider": "codex",
+  "role": "Helper",
+  "priority": "normal"
+}

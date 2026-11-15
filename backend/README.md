@@ -1,6 +1,6 @@
-# 讲道总结后端
+# 跑团回顾后端
 
-Cloudflare Worker：保管 Anthropic API 密钥，检查 App 密钥，限制每天用量，把讲道全文交给 Claude 生成笔记。接口说明见 `docs/api.md`。
+Cloudflare Worker：保管 Anthropic API 密钥，检查 App 密钥，限制每天用量，把这一场的全文和战役记录交给 Claude，生成回顾并更新记录。接口说明见 `docs/api.md`。
 
 ## 本地测试
 
@@ -38,10 +38,10 @@ npm test
    ```bash
    npx wrangler@4 deploy
    ```
-   记下输出的网址（`https://sermon-notes-api.<你的子域>.workers.dev`），写进 `ios/App/Config/Secrets.xcconfig` 的 `BACKEND_URL`。
+   记下输出的网址（`https://tabletop-recap-api.<你的子域>.workers.dev`），写进 `ios/App/Config/Secrets.xcconfig` 的 `BACKEND_URL`。
 7. **检查**：
    ```bash
-   curl https://sermon-notes-api.<你的子域>.workers.dev/health
+   curl https://tabletop-recap-api.<你的子域>.workers.dev/health
    ```
    返回 `{"ok":true}` 就成功了。
 
@@ -49,11 +49,11 @@ npm test
 
 在 `wrangler.toml` 里改 `CLAUDE_MODEL`，然后重新运行 `npx wrangler@4 deploy`。
 
-| 模型 | 每篇讲道大约 | 说明 |
+| 模型 | 每场 4 小时的团大约 | 说明 |
 |---|---|---|
-| `claude-opus-5-5` | 0.08 到 0.13 美元 | 质量最好，现在的默认值 |
-| `claude-haiku-5-5` | 0.003 美元 | 便宜约 40 倍，质量需要用真实讲道比较 |
+| `claude-opus-5-5` | 0.30 到 0.50 美元 | 质量最好，现在的默认值 |
+| `claude-haiku-5-5` | 约 0.01 美元 | 便宜约 40 倍，质量需要用真实录音比较 |
 
 ## 用量上限
 
-`wrangler.toml` 里有两个上限：每台设备每天 5 次，整个服务每天 200 次。整个服务的上限决定最坏情况下每天花多少钱：用 Opus 时约 20 美元一天，用 Haiku 时约 0.6 美元一天。用户多起来以后再调高。
+`wrangler.toml` 里有两个上限：每台设备每天 3 次，整个服务每天 100 次。整个服务的上限决定了最坏情况下每天花多少钱：用 Opus 约 50 美元一天，用 Haiku 约 1 美元一天。用户多起来以后再调高。

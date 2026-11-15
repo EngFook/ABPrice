@@ -1,9 +1,10 @@
-import { SYSTEM_PROMPT, SUMMARY_SCHEMA, buildUserMessage } from "./prompt.js";
+import { RECAP_SCHEMA, SYSTEM_PROMPT, buildUserMessage } from "./prompt.js";
 
 const FALLBACK_BETA = "server-side-fallback-2026-07-01";
+const QUEST_STATUSES = new Set(["new", "ongoing", "completed", "failed"]);
 
 /** A failure the app can show to the user; `code` is part of the API contract (docs/api.md). */
-export class SummaryError extends Error {
+export class RecapError extends Error {
   constructor(code, status, message) {
     super(message);
     this.code = code;
@@ -18,44 +19,49 @@ function supportsServerFallback(model) {
 
 const text = value => (typeof value === "string" ? value.trim() : "");
 const textList = (value, max) => (Array.isArray(value) ? value.map(text).filter(Boolean).slice(0, max) : []);
+const objects = (value, max, map) =>
+  (Array.isArray(value) ? value : []).map(entry => map(entry ?? {})).filter(Boolean).slice(0, max);
 
 /** Checks the model's JSON and trims it to the limits the app expects. */
-export function normalizeSummary(raw) {
+export function normalizeRecap(raw) {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
-    throw new SummaryError("bad_output", 502, "The summary is not a JSON object.");
+    throw new RecapError("bad_output", 502, "The recap is not a JSON object.");
   }
-  const summary = {
-    isSermon: raw.isSermon === true,
+  const recap = {
+    isSession: raw.isSession === true,
     title: text(raw.title),
-    bigIdea: text(raw.bigIdea),
-    outline: (Array.isArray(raw.outline) ? raw.outline : [])
-      .map(point => ({ point: text(point?.point), details: textList(point?.details, 4) }))
-      .filter(point => point.point)
-      .slice(0, 6),
-    scriptures: textList(raw.scriptures, 20),
-    applications: textList(raw.applications, 4),
-    questions: textList(raw.questions, 3),
-    prayer: text(raw.prayer),
+    recap: text(raw.recap),
+    keyMoments: textList(raw.keyMoments, 10),
+    npcs: objects(raw.npcs, 200, entry =>
+      text(entry.name) ? { name: text(entry.name), description: text(entry.description), status: text(entry.status) || "unknown" } : null),
+    locations: objects(raw.locations, 100, entry =>
+      text(entry.name) ? { name: text(entry.name), description: text(entry.description) } : null),
+    quests: objects(raw.quests, 100, entry =>
+      text(entry.name)
+        ? { name: text(entry.name), status: QUEST_STATUSES.has(entry.status) ? entry.status : "ongoing", note: text(entry.note) }
+        : null),
+    loot: objects(raw.loot, 200, entry => (text(entry.item) ? { item: text(entry.item), holder: text(entry.holder) || "party" } : null)),
+    openThreads: textList(raw.openThreads, 5),
   };
-  if (summary.isSermon && (!summary.title || !summary.bigIdea || summary.outline.length === 0)) {
-    throw new SummaryError("bad_output", 502, "The summary is missing its title, big idea or outline.");
+  if (recap.isSession && (!recap.title || !recap.recap)) {
+    throw new RecapError("bad_output", 502, "The recap is missing its title or text.");
   }
-  return summary;
+  return recap;
 }
 
 /**
- * Sends one transcript to Claude and returns the normalized summary.
+ * Sends one session transcript to Claude and returns the normalized recap.
  * `client` is an Anthropic SDK client; SDK errors are left for the caller to map.
  */
-export async function summarizeSermon(client, { model, transcript, title, date }) {
+export async function recapSession(client, { model, transcript, campaignName, party, previousLog, date }) {
   const request = {
     model,
     max_tokens: 16000,
     system: [{ type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
-    messages: [{ role: "user", content: buildUserMessage({ transcript, title, date }) }],
+    messages: [{ role: "user", content: buildUserMessage({ transcript, campaignName, party, previousLog, date }) }],
     output_config: {
       effort: "medium",
-      format: { type: "json_schema", schema: SUMMARY_SCHEMA },
+      format: { type: "json_schema", schema: RECAP_SCHEMA },
     },
   };
   if (supportsServerFallback(model)) {
@@ -66,10 +72,10 @@ export async function summarizeSermon(client, { model, transcript, title, date }
   const response = await client.beta.messages.create(request);
 
   if (response.stop_reason === "refusal") {
-    throw new SummaryError("refused", 422, "The model declined to summarize this transcript.");
+    throw new RecapError("refused", 422, "The model declined to recap this session.");
   }
   if (response.stop_reason === "max_tokens") {
-    throw new SummaryError("truncated", 502, "The summary was cut off.");
+    throw new RecapError("truncated", 502, "The recap was cut off.");
   }
 
   const output = response.content
@@ -80,7 +86,7 @@ export async function summarizeSermon(client, { model, transcript, title, date }
   try {
     parsed = JSON.parse(output);
   } catch {
-    throw new SummaryError("bad_output", 502, "The model did not return valid JSON.");
+    throw new RecapError("bad_output", 502, "The model did not return valid JSON.");
   }
-  return { summary: normalizeSummary(parsed), model: response.model, usage: response.usage };
+  return { recap: normalizeRecap(parsed), model: response.model };
 }

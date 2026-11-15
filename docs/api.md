@@ -1,50 +1,51 @@
-# 后端接口：讲道总结
+# 后端接口：跑团回顾
 
 后端是 `backend/` 里的 Cloudflare Worker。iOS 只调用这一个接口。
 
 ## 请求
 
-`POST {backendURL}/v1/summarize`
+`POST {backendURL}/v1/recap`
 
-请求头：
-
-| 名称 | 值 |
+| 请求头 | 值 |
 |---|---|
 | `Content-Type` | `application/json` |
-| `X-App-Key` | 和后端密钥 `APP_SHARED_KEY` 相同的值。放在 `ios/App/Config/Secrets.xcconfig`，这个文件不进 Git。 |
-
-请求体：
+| `X-App-Key` | 与后端密钥 `APP_SHARED_KEY` 相同的值。放在 `ios/App/Config/Secrets.xcconfig`，这个文件不进 Git。 |
 
 ```json
 {
-  "transcript": "讲道全文，300 到 150000 个字符",
+  "transcript": "这一场的全文，300 到 600000 个字符",
   "deviceId": "UIDevice.identifierForVendor 的 UUID 字符串",
-  "title": "可选，用户自己填的标题",
+  "campaignName": "可选，战役名",
+  "party": ["可选，角色名，最多 12 个"],
+  "previousLog": { "npcs": [], "locations": [], "quests": [], "loot": [] },
   "date": "可选，YYYY-MM-DD"
 }
 ```
+
+`previousLog` 是这个战役当前的记录（上一场返回的那四个列表，加上用户手动改过的内容）。第一场不传。整个对象不能超过 10 万个字符。
 
 ## 成功：200
 
 ```json
 {
-  "summary": {
-    "isSermon": true,
-    "title": "Loved Before We Loved",
-    "bigIdea": "God's love comes first, and our love is a response to it.",
-    "outline": [
-      { "point": "God so loved the world", "details": ["Love that gives", "Love for everyone"] }
-    ],
-    "scriptures": ["John 3:16-18", "Romans 8"],
-    "applications": ["Thank God each morning this week."],
-    "questions": ["Recall question", "Reflection question", "Action question"],
-    "prayer": "Lord, help me receive your love and pass it on."
+  "recap": {
+    "isSession": true,
+    "title": "Smoke Over Brindle Ford",
+    "recap": "Last time, our heroes reached Brindle Ford...",
+    "keyMoments": ["Arrived at Brindle Ford", "Rescued Old Marta"],
+    "npcs": [{ "name": "Old Marta", "description": "Tavern keeper.", "status": "ally" }],
+    "locations": [{ "name": "Brindle Ford", "description": "A river village." }],
+    "quests": [{ "name": "Who burned the mill?", "status": "new", "note": "A black feather was left behind." }],
+    "loot": [{ "item": "Black feather token", "holder": "Kael" }],
+    "openThreads": ["Who leaves black feathers?"]
   },
   "model": "claude-opus-5-5"
 }
 ```
 
-后端保证：`outline` 有 1 到 6 项，每项最多 4 条 `details`；`questions` 最多 3 个；`applications` 最多 4 条；`scriptures` 最多 20 条，格式是 `Book Chapter:Verse`。
+- `npcs`、`locations`、`quests`、`loot` 是这一场结束后的**完整**战役记录，App 直接用它替换原来的记录。
+- `quests[].status` 只会是 `new`、`ongoing`、`completed`、`failed` 之一。
+- `keyMoments` 最多 10 条，`openThreads` 最多 5 条。
 
 ## 失败
 
@@ -52,18 +53,16 @@
 
 | 状态 | 代码 | App 怎么处理 |
 |---|---|---|
-| 400 | `invalid_json`、`invalid_device_id`、`transcript_too_short` | 录音太短或数据有误：提示用户，不重试 |
+| 400 | `invalid_json`、`invalid_device_id`、`transcript_too_short`、`invalid_previous_log` | 提示用户，不重试 |
 | 401 | `unauthorized` | App 的密钥不对：提示更新 App |
-| 413 | `transcript_too_long` | 超过约两个半小时：提示用户 |
-| 422 | `not_a_sermon` | 录音里没找到讲道：提示检查录音 |
+| 413 | `transcript_too_long`、`previous_log_too_long` | 提示录音太长或记录太多 |
+| 422 | `not_a_session` | 录音里没找到跑团内容：提示检查录音 |
 | 422 | `refused` | AI 拒绝处理：提示用户，不重试 |
-| 429 | `device_daily_limit`、`service_daily_limit` | 今天用量到上限：提示明天再试 |
-| 500 | `server_not_configured`、`server_error` | 服务端问题：提示稍后再试 |
-| 502 | `model_unavailable`、`bad_output`、`truncated` | 等 3 秒自动重试一次，再失败就显示重试按钮 |
-| 503 | `busy_retry_later` | 同上 |
+| 429 | `device_daily_limit`、`service_daily_limit` | 今天的用量到上限了：提示明天再试 |
+| 500 | `server_not_configured`、`server_error` | 提示稍后再试 |
+| 502 | `model_unavailable`、`bad_output`、`truncated` | 等 3 秒自动重试一次，还是失败就显示重试按钮 |
+| 503 | `busy_retry_later` | 同 502 |
 
-请求超时设为 120 秒，AI 处理一篇讲道通常需要几十秒。
+请求超时设为 180 秒。长的一场，AI 可能要处理一两分钟。
 
-## 其他
-
-`GET /health` 返回 `{ "ok": true }`，用来检查服务是否在线。
+`GET /health` 返回 `{ "ok": true }`。
