@@ -1,0 +1,22 @@
+name = "sermon-notes-api"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# claude-opus-5-5: best notes, roughly US$0.08-0.13 per sermon.
+# claude-haiku-5-5: roughly US$0.003 per sermon. Change here and redeploy.
+CLAUDE_MODEL = "claude-opus-5-5"
+DAILY_LIMIT_PER_DEVICE = "5"
+# Caps the worst-case daily spend (about US$20 a day on Opus). Raise it as usage grows.
+GLOBAL_DAILY_LIMIT = "200"
+
+# Daily limits. Create it with: npx wrangler@4 kv namespace create RATE
+# then paste the printed id here.
+[[kv_namespaces]]
+binding = "RATE"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+# Secrets (never in this file):
+#   npx wrangler@4 secret put ANTHROPIC_API_KEY
+#   npx wrangler@4 secret put APP_SHARED_KEY

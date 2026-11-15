@@ -1,4 +1,9 @@
 .DS_Store
+node_modules/
+.wrangler/
+
+# Backend URL and app key for the iOS build (see docs/api.md)
+ios/App/Config/Secrets.xcconfig
 
 # Xcode (the project is generated from ios/project.yml by XcodeGen)
 *.xcodeproj/

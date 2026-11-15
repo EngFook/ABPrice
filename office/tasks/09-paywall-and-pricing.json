@@ -1,0 +1,7 @@
+{
+  "title": "讲道笔记：引导页示例笔记、付费页文案和定价核对",
+  "description": "前提：「讲道笔记：每周回顾提醒」已完成。定价和付费页的依据见 docs/plan.md 的定价部分。\n\n要做的：\n1. 引导页最后一页之前，加一页「示例笔记」：用 ios/App/Resources/SampleSummary.json 渲染成和真实详情页一样的样子（可以滚动），标题写明 Sample notes。这是付费页之前的效果演示，不调用后端。\n2. 付费页的 proBenefits 改成这三条（英文，和实际功能一致，不要夸大）：Notes, verses and questions for every sermon；Share discussion guides with your small group；Weekly recap reminders。\n3. 核对最终状态（如果前面的卡已经按旧数值做了，就改成这里的数值）：\n   - Products.storekit 里只有两个方案：年付 39.99 美元带 2 周免费试用，排在第一位；月付 7.99 美元不带试用。没有每周方案。\n   - AppConfig.freeUses 是 1，AppConfig.aiProviderName 是 \"Anthropic's Claude AI\"。\n   - 付费页能关闭（右上角的关闭按钮），有恢复购买，有服务条款和隐私政策链接。\n4. 付费页上按苹果审核指南 3.1.2 的要求，实际扣费金额要比试用和折算价更醒目。用 SubscriptionStoreView 自带的显示方式就行，不要自己加「每天只要几分钱」这类文案。\n\n完成标准：编译通过；在模拟器里从全新安装走一遍：引导页、示例笔记、付费页、关闭、录音、第一次免费总结（假数据模式）、第二次弹付费页。截图放进 docs/screenshots/。提交并推送，报告里列出改动文件和检查结果。",
+  "provider": "any",
+  "role": "Helper",
+  "priority": "normal"
+}
