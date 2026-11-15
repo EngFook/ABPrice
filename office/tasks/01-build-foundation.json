@@ -1,0 +1,7 @@
+{
+  "title": "iOS 基础工程：生成 Xcode 工程，在模拟器编译通过",
+  "description": "目标：让 ios/ 里的 SwiftUI 基础工程在这台 Mac 上编译通过，并在模拟器里跑通整个流程。这些代码是在云端写的，还没编译过，可能有少量编译错误。\n\n步骤：\n1. 如果没有 XcodeGen，先安装：brew install xcodegen\n2. 在 ios/ 目录运行 xcodegen generate，生成 App.xcodeproj。\n3. 编译到模拟器，编译产物放在项目目录里：\n   xcodebuild -project ios/App.xcodeproj -scheme App -destination 'generic/platform=iOS Simulator' -derivedDataPath ios/build/DerivedData build\n4. 修复所有编译错误。只改让它能编译、能正常运行所需要的地方：不加第三方依赖，不改 AppConfig 里的文案和设置，不改整体流程。\n5. 如果本机允许启动模拟器，就安装并启动 App，检查：(1) 引导页 3 页能翻到底并进入主页；(2) 点主页按钮会先弹出 AI 同意页，同意后显示结果；(3) 用完 3 次免费次数后弹出付费页；(4) 设置页能打开和关闭。付费页这时显示无法加载商品是正常的，下一张任务卡会加上本地测试商品。\n6. 提交并推送到当前分支，提交说明写清改了哪些文件、为什么改。\n\n完成报告要包含：xcodebuild 最后输出的 BUILD SUCCEEDED；第 5 步每一项的检查结果（如果不能启动模拟器，写明被哪条命令挡住）；改动文件清单。",
+  "provider": "any",
+  "role": "Helper",
+  "priority": "high"
+}

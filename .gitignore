@@ -1,0 +1,12 @@
+.DS_Store
+
+# Xcode (the project is generated from ios/project.yml by XcodeGen)
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+build/
+ios/App/Info.plist
+
+# AI Office: cards already added on this Mac
+office/.added
