@@ -1,0 +1,7 @@
+{
+  "title": "讲道笔记：接后端，生成大纲、经文、讨论题",
+  "description": "前提：「讲道笔记：用 SpeechAnalyzer 在手机上转文字」已完成。后端接口约定见 docs/api.md（如果还没有这个文件，先用下面第 3 步的结构做假数据模式，完成后报告「等后端」）。\n\n要做的：\n1. 新建 SummaryService：把讲道全文 POST 到后端（地址放在 AppConfig.backendURL），解析返回的 JSON，存进 Sermon.summaryJSON，状态改成 done。\n2. 调用前走已有流程：第一次先弹 AI 同意页（把 AppConfig.aiProviderName 改成实际用的 AI 服务商，等后端定了再改）；免费用户用 UsageQuota 计次，AppConfig.freeUses 改成 2，用完弹付费页。\n3. 返回结构（以 docs/api.md 为准）：title、bigIdea（一句话）、outline（3 到 6 个要点，每个要点带 details 数组）、scriptures（经文出处字符串数组，比如 \"John 3:16-18\"）、applications（生活应用数组）、questions（正好 3 个讨论题）、prayer（一句祷告提示）。\n4. DEBUG 模式下加一个假数据开关（AppConfig.useMockSummary），返回一份固定的示例 JSON，方便在后端上线前把界面做完。\n5. 详情页展示总结：标题、一句话重点、大纲、经文出处（下一张卡会变成经文卡片）、生活应用、讨论题、祷告提示。排版要清楚好读，支持深色模式和动态字体。\n6. 处理离线、超时、服务器错误：显示原因和重试按钮。重新生成也算一次使用。\n\n完成标准：编译通过；假数据模式下整个流程能跑通（同意页、免费次数、付费页、总结显示）；后端可用时用真实接口跑一次。提交并推送，报告里列出改动文件和检查结果。",
+  "provider": "any",
+  "role": "Helper",
+  "priority": "normal"
+}

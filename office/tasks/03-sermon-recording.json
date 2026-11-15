@@ -1,0 +1,7 @@
+{
+  "title": "讲道笔记：录音（锁屏可继续）、导入音频、讲道列表",
+  "description": "背景：这个 App 是讲道笔记（方案见 docs/plan.md）。这张卡做录音和讲道列表，转文字和 AI 总结在后面的卡里做。\n\n前提：基础工程那两张卡已经完成。如果工程还编译不过，先停下并报告。\n\n要做的：\n1. 把 ios/project.yml 的部署目标改成 iOS 26.0（后面转文字要用 iOS 26 的 SpeechAnalyzer），重新 xcodegen generate。\n2. Info.plist 加上麦克风权限说明 NSMicrophoneUsageDescription（英文，说明是为了录下讲道做笔记），加上 UIBackgroundModes: audio，让锁屏后还能继续录。\n3. 用 SwiftData 建 Sermon 模型：id、title、date、speaker（可选）、audioFileName、duration、transcript（可选）、summaryJSON（可选）、status（recorded / transcribing / transcribed / summarizing / done / failed）。\n4. 录音页：开始、暂停、继续、停止；显示计时和音量；锁屏和切到后台时继续录；来电等打断要妥善处理（暂停并能继续）。用 AVAudioRecorder 存成 m4a（AAC，单声道），放在 Documents/Recordings。\n5. 支持从文件 App 导入音频（m4a/mp3/wav），用来导入教会播客下载的讲道。\n6. 主页改成讲道列表（最新的在上面），右下或底部有醒目的录音按钮，点一条进入详情页（详情页先显示标题、日期、时长和播放按钮）。\n7. 原来 HomeView 的「同意页 → 免费次数 → 付费页」流程保留，但只在 AI 总结时才用到（录音在本机完成，不需要同意页，也不算次数）。这一步先把流程接口留好，下一张卡接上。\n8. 把 AppConfig 的文案改成讲道笔记的（英文）：appName 暂时用 \"Sermon Notes\"，引导页 3 页分别讲录音、自动生成大纲和讨论题、分享给小组。\n\n完成标准：编译通过；在模拟器里录一段 1 分钟以上的音，中途锁屏再解锁，停止后列表里出现这一条，能播放；导入一个音频文件也能出现在列表里。提交并推送，报告里列出改动文件和每项检查结果。",
+  "provider": "any",
+  "role": "Helper",
+  "priority": "normal"
+}
